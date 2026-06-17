@@ -234,7 +234,7 @@ export default function WeekView() {
 
                     {/* Extra Scheduled Sessions */}
                     {dayExtras.map((ex) => {
-                      const sub = data.subjects.find((s) => s.id === ex.subjectId);
+                      const sub = data.subjects.find((s) => s.id === ex.subjectId || `course_${ex.subjectId}` === s.id);
                       const extraKey = `extra_${ex.id}`;
                       const status = dayRecords[extraKey];
 
