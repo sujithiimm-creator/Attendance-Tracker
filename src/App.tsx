@@ -30,20 +30,10 @@ function MainAppContent() {
   const [activeTab, setActiveTab] = useState<TabType>("today");
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  // Read persisted dark mode preference
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    return localStorage.getItem("attendtrack_darkMode") === "true";
-  });
-
-  // Keep dark mode class in sync on root document element
+  // Force dark mode class on root document element to ensure dark mode only
   useEffect(() => {
-    localStorage.setItem("attendtrack_darkMode", String(darkMode));
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [darkMode]);
+    document.documentElement.classList.add("dark");
+  }, []);
 
   // Read login/registration toasts safely
   useEffect(() => {
@@ -173,18 +163,7 @@ function MainAppContent() {
               {getInitials()}
             </div>
             
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-              className="p-1.5 border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-400 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition cursor-pointer"
-            >
-              {darkMode ? (
-                <Sun className="w-4 h-4 text-amber-500" />
-              ) : (
-                <Moon className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
-              )}
-            </button>
+
 
             <button
               id="header-logout-btn"

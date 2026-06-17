@@ -324,18 +324,18 @@ export default function TodayView() {
 
       {/* Subject-Wise Analytics Section */}
       <section className="mt-8 border-t border-slate-200 dark:border-slate-800 pt-6">
-        <div className="flex flex-col gap-1 mb-4">
-          <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 font-sans tracking-tight">
+        <div className="flex flex-col gap-1.5 mb-5">
+          <h3 className="text-xl font-black text-slate-800 dark:text-slate-100 font-sans tracking-tight">
             Subject Attendance Analytics
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-            Visual metrics tracker for all registered courses. Safe threshold is <b className="text-indigo-650 dark:text-indigo-400 font-black">85%</b> of Conducted Lectures.
+          <p className="text-sm text-slate-600 dark:text-slate-300 font-medium">
+            Visual metrics tracker for all registered courses. Safe threshold is <b className="text-indigo-600 dark:text-indigo-400 font-extrabold">85%</b> of Conducted Lectures.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="subject-wise-progress-container">
           {data.subjects.length === 0 ? (
-            <div className="col-span-full py-6 text-center text-xs text-slate-400">
+            <div className="col-span-full py-8 text-center text-sm text-slate-400">
               No registered subjects to analyze. Configure your timetable first.
             </div>
           ) : (
@@ -346,22 +346,22 @@ export default function TodayView() {
               return (
                 <div
                   key={sub.id}
-                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4.5 shadow-xs flex flex-col justify-between gap-3 min-h-[125px] transition-all hover:shadow-sm"
+                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs flex flex-col justify-between gap-4 min-h-[140px] transition-all hover:shadow-md"
                 >
-                  <div className="flex justify-between items-start gap-2">
+                  <div className="flex justify-between items-start gap-3">
                     <div className="flex-1 pr-1">
-                      <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm leading-snug">
+                      <h4 className="font-extrabold text-slate-900 dark:text-slate-100 text-base leading-snug">
                         {sub.name}
                       </h4>
-                      <span className="text-[10px] uppercase font-bold text-indigo-600 dark:text-indigo-400 tracking-wider">
+                      <span className="text-xs uppercase font-extrabold text-indigo-600 dark:text-indigo-400 tracking-wider">
                         {sub.code}
                       </span>
                     </div>
                     <div className="text-right shrink-0">
-                      <span className={`text-[12px] font-black px-2 py-0.5 rounded-md tracking-wider ${
+                      <span className={`text-[14px] font-black px-2.5 py-1 rounded-md tracking-wider ${
                         isSafe
-                          ? "bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-400"
-                          : "bg-amber-50 text-amber-700 dark:bg-amber-950/45 dark:text-amber-400"
+                          ? "bg-green-100 text-green-800 dark:bg-green-950/50 dark:text-green-300 border border-green-200 dark:border-green-800/60"
+                          : "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60"
                       }`}>
                         {stats.percentage.toFixed(0)}%
                       </span>
@@ -370,7 +370,7 @@ export default function TodayView() {
 
                   {/* Progress Bar Container */}
                   <div className="w-full">
-                    <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 mt-1 overflow-hidden">
+                    <div className="w-full bg-slate-100 dark:bg-slate-850 rounded-full h-2.5 mt-1 overflow-hidden border border-slate-200 dark:border-slate-800">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
                           isSafe ? "bg-green-500" : "bg-amber-500"
@@ -380,17 +380,17 @@ export default function TodayView() {
                     </div>
 
                     {/* Details list below progress bar */}
-                    <div className="flex items-center gap-3.5 text-[10px] text-slate-550 dark:text-slate-400 mt-2.5 font-medium">
+                    <div className="flex items-center justify-between text-xs mt-3 text-slate-600 dark:text-slate-300 font-bold bg-slate-50 dark:bg-slate-950/60 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-slate-800">
                       <span>
-                        Conducted: <strong className="text-slate-800 dark:text-slate-205 font-extrabold">{stats.totalActive}</strong>
+                        Conducted: <strong className="text-slate-900 dark:text-slate-50 font-black">{stats.totalActive}</strong>
                       </span>
-                      <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+                      <span className="w-1 h-3 border-l border-slate-300 dark:border-slate-800" />
                       <span>
-                        Present: <strong className="text-green-600 dark:text-green-400 font-extrabold">{stats.presentCount}</strong>
+                        Present: <strong className="text-green-600 dark:text-green-400 font-black">{stats.presentCount}</strong>
                       </span>
-                      <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+                      <span className="w-1 h-3 border-l border-slate-300 dark:border-slate-800" />
                       <span>
-                        Absent: <strong className="text-red-500 dark:text-red-400 font-extrabold">{stats.absentCount}</strong>
+                        Absent: <strong className="text-red-500 dark:text-red-400 font-black">{stats.absentCount}</strong>
                       </span>
                     </div>
                   </div>

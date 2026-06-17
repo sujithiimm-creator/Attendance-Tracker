@@ -95,8 +95,8 @@ export function calculateSubjectStats(
   });
 
   const totalActive = presentCount + absentCount;
-  // If no sessions marked, it defaults to 100% per standard practice or 100 as default
-  const percentage = totalActive > 0 ? (presentCount / totalActive) * 100 : 100;
+  // If no sessions marked, it starts from 0% per user request
+  const percentage = totalActive > 0 ? (presentCount / totalActive) * 100 : 0;
 
   return {
     subjectId: subject.id,
