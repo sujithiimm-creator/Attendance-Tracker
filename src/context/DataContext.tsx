@@ -49,7 +49,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const initial: UserDocument = {
             email: user.email || "",
             displayName: user.displayName || "",
-            subjects: DEFAULT_SUBJECTS,
+            subjects: [],
             records: {},
             extraClasses: [],
           };
@@ -58,11 +58,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setSyncStatus("saved");
         }
       } else {
-        // First login: auto provision with DEFAULT_SUBJECTS seed
+        // First login: auto provision with empty seed
         const initial: UserDocument = {
           email: user.email || "",
           displayName: user.displayName || "",
-          subjects: DEFAULT_SUBJECTS,
+          subjects: [],
           records: {},
           extraClasses: [],
         };
@@ -84,13 +84,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setData(snapshot.data() as UserDocument);
           setSyncStatus("saved");
         } else {
-          // Document does not exist yet: provision with DEFAULT_SUBJECTS
+          // Document does not exist yet: provision with empty subjects so they configure it first
           setSyncStatus("saving");
           try {
             const initial: UserDocument = {
               email: user.email || "",
               displayName: user.displayName || "",
-              subjects: DEFAULT_SUBJECTS,
+              subjects: [],
               records: {},
               extraClasses: [],
             };

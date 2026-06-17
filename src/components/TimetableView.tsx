@@ -289,7 +289,7 @@ export default function TimetableView() {
                 IIM Mumbai · Module 5
               </span>
               <h2 className="text-xl md:text-2xl font-black tracking-tight mt-2.5">
-                Dynamic Timetable Builder
+                Timetable Configurator
               </h2>
               <p className="text-xs text-indigo-200 mt-1 max-w-xl">
                 Configure your Cohort Section to load core subjects automatically, then select matching electives for each time slot with conflict checks.
@@ -349,7 +349,7 @@ export default function TimetableView() {
                       }}
                       className={`py-3.5 px-3 rounded-xl border text-center transition-all ${
                         isSelected
-                          ? "bg-indigo-600 border-indigo-650 text-white font-extrabold shadow-sm scale-[1.03]"
+                          ? "bg-indigo-600 border-indigo-700 text-white font-extrabold shadow-sm scale-[1.03]"
                           : "bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700 font-bold"
                       }`}
                     >
@@ -360,7 +360,7 @@ export default function TimetableView() {
               </div>
 
               {/* Core subjects loaded under selected section */}
-              <div className="bg-slate-50/50 rounded-xl border border-slate-150 p-4 flex flex-col gap-2.5">
+              <div className="bg-slate-50/50 rounded-xl border border-slate-200 p-4 flex flex-col gap-2.5">
                 <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">
                   Locked Core Modules for Section {selectedSection}
                 </span>
@@ -381,7 +381,7 @@ export default function TimetableView() {
                           Slot {c.slot}
                         </span>
                         <h4 className="text-xs font-extrabold text-slate-800 line-clamp-1 mt-1 pr-4">{c.course}</h4>
-                        <span className="text-[9.5px] text-slate-450 truncate">{c.faculty?.join(', ') || 'Faculty'}</span>
+                        <span className="text-[9.5px] text-slate-400 truncate">{c.faculty?.join(', ') || 'Faculty'}</span>
                       </div>
                     );
                   })}
@@ -440,12 +440,12 @@ export default function TimetableView() {
                               }`}
                             >
                               <div className="flex items-start justify-between gap-1.5 w-full">
-                                <h4 className={`text-xs font-extrabold leading-snug line-clamp-2 ${isPicked ? 'text-indigo-800' : 'text-slate-805 text-slate-800'}`}>
+                                <h4 className={`text-xs font-extrabold leading-snug line-clamp-2 ${isPicked ? 'text-indigo-800' : 'text-slate-800'}`}>
                                   {c.course}
                                 </h4>
                                 <div className={`w-4 h-4 rounded-full border shrink-0 flex items-center justify-center transition ${
                                   isPicked 
-                                    ? "bg-indigo-600 border-indigo-650 text-white" 
+                                    ? "bg-indigo-600 border-indigo-700 text-white" 
                                     : "border-slate-300 group-hover:border-slate-400"
                                 }`}>
                                   {isPicked && <Check className="w-2.5 h-2.5 stroke-[3]" />}
@@ -459,7 +459,7 @@ export default function TimetableView() {
                               <div className="flex flex-wrap gap-1 mt-1.5">
                                 {c.sessions.map((sess, sidx) => (
                                   <span key={sidx} className={`text-[8.5px] font-bold px-1.5 py-0.5 rounded ${
-                                    isPicked ? 'bg-indigo-100 text-indigo-805' : 'bg-slate-100 text-slate-505 text-slate-500'
+                                    isPicked ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-100 text-slate-550 text-slate-500'
                                   }`}>
                                     {DAY_SHORT_NAMES[DAY_MAP_INDICES[sess.day]]} {sess.start}-{sess.end}
                                   </span>
@@ -487,7 +487,7 @@ export default function TimetableView() {
               </div>
 
               {/* Selected List Summary */}
-              <div className="flex flex-col gap-2 bg-slate-50 rounded-xl p-3.5 border border-slate-150 text-xs">
+              <div className="flex flex-col gap-2 bg-slate-50 rounded-xl p-3.5 border border-slate-200 text-xs">
                 <div className="flex justify-between items-center pb-2 border-b border-slate-200">
                   <span className="font-extrabold text-slate-500">Selected Cohort</span>
                   <span className="font-black text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded text-xxs uppercase">
@@ -511,7 +511,7 @@ export default function TimetableView() {
 
                 <div className="flex justify-between items-center pt-1">
                   <span className="font-black text-slate-700 uppercase">Total Courses</span>
-                  <span className="font-black text-indigo-650 text-sm">
+                  <span className="font-black text-indigo-600 text-sm">
                     {activeBuildCourses.length} Lectures
                   </span>
                 </div>
@@ -534,9 +534,9 @@ export default function TimetableView() {
                 <button
                   type="button"
                   onClick={handleConfirmAndSync}
-                  className="w-full py-3 bg-indigo-650 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-100 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 transition active:scale-[0.98] shadow-sm"
+                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-100 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 transition active:scale-[0.98] shadow-sm cursor-pointer"
                 >
-                  <Sparkles className="w-4 h-4 text-amber-300 fill-amber-300" />
+                  <Sparkles className="w-4 h-4 text-amber-350 fill-amber-350" />
                   Confirm Timetable & Sync
                 </button>
 
@@ -589,7 +589,7 @@ export default function TimetableView() {
                               className="bg-white border border-slate-150 rounded-lg py-1 px-2 text-[9px] flex items-center justify-between gap-1.5"
                             >
                               <div className="flex flex-col min-w-0">
-                                <span className="font-extrabold text-indigo-750 text-indigo-700 truncate">{course.course}</span>
+                                <span className="font-extrabold text-indigo-700 truncate">{course.course}</span>
                                 <span className="text-[8.5px] text-slate-400">Rm {session.room} · {session.faculty}</span>
                               </div>
                               <span className="text-[8.5px] font-black text-slate-500 bg-slate-100 rounded px-1 shrink-0">
@@ -642,7 +642,7 @@ export default function TimetableView() {
             </div>
             <div>
               <span className="text-xxs font-bold text-slate-400 uppercase tracking-wider block">Enrolled subjects count</span>
-              <h4 className="text-sm font-extrabold text-slate-805 text-slate-800">
+              <h4 className="text-sm font-extrabold text-slate-800">
                 You have {data.subjects.length} modules configured on your roster.
               </h4>
             </div>
@@ -739,7 +739,7 @@ export default function TimetableView() {
                         <span className={`text-[9px] font-black tracking-wide px-2 py-0.5 rounded uppercase ${theme.bg} ${theme.text}`}>
                           {sub.code}
                         </span>
-                        <h4 className="text-xs font-extrabold text-slate-805 text-slate-800 line-clamp-1">
+                        <h4 className="text-xs font-extrabold text-slate-800 line-clamp-1">
                           {sub.name}
                         </h4>
                       </div>
@@ -831,13 +831,13 @@ export default function TimetableView() {
                     
                     <h4 className="text-xs font-bold text-slate-800 leading-snug line-clamp-1 pl-1 mt-1">{sub.name}</h4>
                     
-                    <div className="flex items-start gap-3 text-[10.5px] text-slate-505 text-slate-500 mt-1 pl-1">
+                    <div className="flex items-start gap-3 text-[10.5px] text-slate-500 mt-1 pl-1">
                       <div className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>{ex.time}</span>
                       </div>
                       {ex.note && (
-                        <span className="text-slate-450 truncate flex-1 border-l border-slate-200 pl-3">
+                        <span className="text-slate-400 truncate flex-1 border-l border-slate-200 pl-3">
                           {ex.note}
                         </span>
                       )}
