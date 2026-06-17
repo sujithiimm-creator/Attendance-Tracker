@@ -13,6 +13,7 @@ interface DataContextType {
   addSubject: (subject: Omit<Subject, "id">) => Promise<void>;
   updateSubject: (subject: Subject) => Promise<void>;
   deleteSubject: (subjectId: string) => Promise<void>;
+  setSubjects: (subjects: Subject[]) => Promise<void>;
   addExtraClass: (extra: Omit<ExtraClass, "id">) => Promise<void>;
   deleteExtraClass: (extraId: string) => Promise<void>;
   markAttendance: (dateISO: string, subjectOrExtraId: string, status: AttendanceStatus) => Promise<void>;
@@ -267,6 +268,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await writeData(updated);
   };
 
+  const setSubjects = async (newSubjects: Subject[]) => {
+    if (!data) return;
+    const updated: UserDocument = {
+      ...data,
+      subjects: newSubjects,
+    };
+    await writeData(updated);
+  };
+
   const resetData = async () => {
     if (!data) return;
     const updated: UserDocument = {
@@ -286,6 +296,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addSubject,
         updateSubject,
         deleteSubject,
+        setSubjects,
         addExtraClass,
         deleteExtraClass,
         markAttendance,
