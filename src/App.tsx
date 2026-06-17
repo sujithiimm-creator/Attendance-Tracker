@@ -89,8 +89,7 @@ function MainAppContent() {
     let textStr = "Connecting…";
 
     if (isMock) {
-      dotColor = "bg-indigo-400";
-      textStr = "Sujith's Attendance";
+      return null;
     } else {
       switch (syncStatus) {
         case "saving":
@@ -231,7 +230,7 @@ function MainAppContent() {
             AttendTrack · Consolidated Mod 5 Roster
           </span>
           <span className="text-[10px] text-slate-500 dark:text-slate-400 font-black tracking-wider block">
-            IIM Mumbai | From Sujith 🔥
+            IIM Mumbai | Academic Portal 🔥
           </span>
         </footer>
       </div>

@@ -1,5 +1,5 @@
 {
-  "name": "Sujith's Attendance",
+  "name": "AttendTrack",
   "description": "A multi-user class attendance tracker for IIM Mumbai MBA students to manage subjects, attendance records, and extra-class schedules with Firestore.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

@@ -73,8 +73,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Simulated Google sign in
       const defaultUser: AuthUser = {
         uid: "mock_google_user_123",
-        email: "sujithgb10@gmail.com",
-        displayName: "Sujith G B",
+        email: "demo.student@iimmumbai.ac.in",
+        displayName: "Demo Student",
       };
       localStorage.setItem("attendtrack_mock_user", JSON.stringify(defaultUser));
       setUser(defaultUser);

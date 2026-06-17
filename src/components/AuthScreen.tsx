@@ -110,7 +110,7 @@ export default function AuthScreen() {
                 <input
                   id="displayName"
                   type="text"
-                  placeholder="e.g. Sujith Kumar"
+                  placeholder="e.g. Rahul Sharma"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:border-indigo-400 focus:bg-white transition"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
