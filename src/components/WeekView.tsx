@@ -8,13 +8,52 @@ import {
   DAY_NAMES, 
   DAY_SHORT_NAMES 
 } from "../lib/helpers";
-import { ChevronLeft, ChevronRight, Calendar, Lock, CheckCircle, Info } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Lock, CheckCircle, Info, Plus, Clock } from "lucide-react";
 
 export default function WeekView() {
-  const { data, markAttendance } = useData();
+  const { data, markAttendance, addExtraClass } = useData();
   const [currentWeekMonday, setCurrentWeekMonday] = useState<Date>(() => getMondayOfWeek(new Date()));
 
+  // Quick Add Extra Class states
+  const [quickExtraOpen, setQuickExtraOpen] = useState(false);
+  const [quickSubjectId, setQuickSubjectId] = useState("");
+  const [quickDate, setQuickDate] = useState(() => getLocalDateString(new Date()));
+  const [quickTime, setQuickTime] = useState("");
+  const [quickNote, setQuickNote] = useState("");
+  const [isQuickSaving, setIsQuickSaving] = useState(false);
+  const [quickError, setQuickError] = useState<string | null>(null);
+  const [quickSuccess, setQuickSuccess] = useState<string | null>(null);
+
   if (!data) return null;
+
+  const submitQuickExtra = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickSubjectId) {
+      setQuickError("Subject is mandatory");
+      return;
+    }
+    setIsQuickSaving(true);
+    setQuickError(null);
+    setQuickSuccess(null);
+    try {
+      await addExtraClass({
+        subjectId: quickSubjectId,
+        date: quickDate,
+        time: quickTime.trim() || "Time pending",
+        note: quickNote.trim() || "Makeup class",
+      });
+      setQuickSuccess("Extra class scheduled successfully!");
+      setQuickSubjectId("");
+      setQuickTime("");
+      setQuickNote("");
+      // Auto close/clear success message after 3 secs
+      setTimeout(() => setQuickSuccess(null), 3000);
+    } catch (err: any) {
+      setQuickError(err?.message || "Failed to add extra class");
+    } finally {
+      setIsQuickSaving(false);
+    }
+  };
 
   // Actual real-world today boundaries
   const actualToday = new Date();
@@ -81,6 +120,85 @@ export default function WeekView() {
         >
           <ChevronRight className="w-5 h-5 text-slate-600" />
         </button>
+      </div>
+
+      {/* Quick Add Extra Class Card (Attendance Deck Section) */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm" id="week-quick-add-extra-container">
+        <button
+          type="button"
+          onClick={() => setQuickExtraOpen(!quickExtraOpen)}
+          className="w-full flex items-center justify-between text-xs font-bold text-slate-700 uppercase tracking-wider"
+        >
+          <span className="flex items-center gap-2">
+            <Plus className="w-4.5 h-4.5 text-indigo-600 animate-pulse" />
+            <span className="font-extrabold text-slate-800">Quick-Add Extra Class (Makeup)</span>
+          </span>
+          <span className="text-[10px] text-indigo-650 bg-indigo-50 border border-indigo-200/50 px-2.5 py-1 rounded-lg font-bold hover:bg-indigo-100/50 transition">
+            {quickExtraOpen ? "Close Panel [-]" : "Open Panel [+]"}
+          </span>
+        </button>
+
+        {quickExtraOpen && (
+          <form onSubmit={submitQuickExtra} className="mt-4 pt-4 border-t border-slate-100 flex flex-col md:flex-row gap-4 items-end">
+            <div className="flex-1 w-full flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Subject (Mandatory)</label>
+              <select
+                required
+                value={quickSubjectId}
+                onChange={(e) => setQuickSubjectId(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs font-semibold outline-none focus:border-indigo-400 focus:bg-white transition"
+              >
+                <option value="">-- Choose Course --</option>
+                {data.subjects.map((sub) => (
+                  <option key={sub.id} value={sub.id}>
+                    {sub.name} ({sub.code})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex-1 w-full flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Date (Mandatory)</label>
+              <input
+                type="date"
+                required
+                value={quickDate}
+                onChange={(e) => setQuickDate(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs font-semibold outline-none focus:border-indigo-400 focus:bg-white transition"
+              />
+            </div>
+
+            <div className="flex-1 w-full flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Time (Optional)</label>
+              <input
+                type="text"
+                placeholder="e.g. 11:10 am to 12:40 pm"
+                value={quickTime}
+                onChange={(e) => setQuickTime(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs outline-none focus:border-indigo-400 focus:bg-white transition"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={isQuickSaving || data.subjects.length === 0}
+              className="bg-indigo-650 hover:bg-indigo-700 bg-indigo-650 hover:bg-indigo-700 disabled:bg-slate-300 text-white font-black text-xs px-5 py-2.5 rounded-xl transition shadow-md shadow-indigo-150 shrink-0 w-full md:w-auto"
+            >
+              {isQuickSaving ? "Scheduling..." : "Schedule Makeup"}
+            </button>
+          </form>
+        )}
+
+        {quickError && (
+          <div className="mt-2 text-xs text-red-650 bg-red-50 border border-red-150 p-2 rounded-xl">
+            {quickError}
+          </div>
+        )}
+        {quickSuccess && (
+          <div className="mt-2 text-xs text-green-650 bg-green-50 border border-green-150 p-2 rounded-xl">
+            {quickSuccess}
+          </div>
+        )}
       </div>
 
       {/* Week days roster */}

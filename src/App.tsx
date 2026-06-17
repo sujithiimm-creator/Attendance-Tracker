@@ -20,7 +20,7 @@ import {
   Sparkles
 } from "lucide-react";
 
-type TabType = "today" | "week" | "timetable" | "subjects" | "stats";
+type TabType = "today" | "week" | "subjects" | "timetable";
 
 function MainAppContent() {
   const { user, logout, isMock } = useAuth();
@@ -63,9 +63,14 @@ function MainAppContent() {
       case "timetable":
         return <TimetableView />;
       case "subjects":
-        return <SubjectsView />;
-      case "stats":
-        return <StatsView />;
+        return (
+          <div className="flex flex-col gap-8">
+            <StatsView />
+            <div className="border-t border-slate-205 border-slate-200 pt-8 mt-4">
+              <SubjectsView />
+            </div>
+          </div>
+        );
       default:
         return <TodayView />;
     }
@@ -78,7 +83,7 @@ function MainAppContent() {
 
     if (isMock) {
       dotColor = "bg-indigo-400";
-      textStr = "Local Demo";
+      textStr = "Sujith's Attendance";
     } else {
       switch (syncStatus) {
         case "saving":
@@ -143,7 +148,7 @@ function MainAppContent() {
         {/* 1. Header Area */}
         <header className="bg-white px-6 pt-5 pb-3 border-b border-slate-200 flex justify-between items-center shrink-0">
           <div>
-            <h1 className="text-xl font-black text-indigo-750 text-indigo-600 tracking-tight">AttendTrack</h1>
+            <h1 className="text-xl font-black text-indigo-600 tracking-tight">AttendTrack</h1>
             {renderSyncIndicator()}
           </div>
           <div className="flex items-center gap-3">
@@ -151,11 +156,11 @@ function MainAppContent() {
               {getInitials()}
             </div>
             <button
-              id="header-logout-btn"
+               id="header-logout-btn"
               type="button"
               onClick={logout}
               title="Sign Out"
-              className="p-1.5 border border-slate-200 hover:border-slate-350 rounded-lg hover:bg-slate-50 text-slate-400 transition"
+              className="p-1.5 border border-slate-200 hover:border-indigo-400 rounded-lg hover:bg-slate-50 text-slate-400 transition"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -167,9 +172,8 @@ function MainAppContent() {
           {[
             { id: "today", label: "Today's Schedule" },
             { id: "week", label: "Attendance Deck" },
-            { id: "timetable", label: "Visual Grid" },
-            { id: "subjects", label: "Modules Setup" },
-            { id: "stats", label: "Pass Analytics" },
+            { id: "subjects", label: "Modules & Analytics" },
+            { id: "timetable", label: "Time Table Setter" },
           ].map((tab) => {
             const isSelected = activeTab === tab.id;
             return (
@@ -198,9 +202,12 @@ function MainAppContent() {
         </main>
 
         {/* 4. Bottom Utilities Bar */}
-        <footer className="shrink-0 bg-slate-50 border-t border-slate-200 text-center py-4 px-6 flex flex-col gap-1.5">
+        <footer className="shrink-0 bg-slate-50 border-t border-slate-200 text-center py-4 px-6 flex flex-col gap-1 h-14 justify-center">
           <span className="text-[10px] text-slate-400 font-extrabold tracking-wide block">
             AttendTrack · Consolidated Mod 5 Roster
+          </span>
+          <span className="text-[10px] text-slate-500 font-black tracking-wider block">
+            IIM Mumbai | From Sujith 🔥
           </span>
         </footer>
       </div>
