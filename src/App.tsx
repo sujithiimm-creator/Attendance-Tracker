@@ -230,7 +230,7 @@ function MainAppContent() {
             AttendTrack · Consolidated Mod 5 Roster
           </span>
           <span className="text-[10px] text-slate-500 dark:text-slate-400 font-black tracking-wider block">
-            IIM Mumbai | Academic Portal 🔥
+            IIM Mumbai | From Sujith 🔥
           </span>
         </footer>
       </div>

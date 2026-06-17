@@ -256,10 +256,25 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   ) => {
     if (!data) return;
     const updatedRecords = { ...data.records };
-    if (!updatedRecords[dateISO]) {
-      updatedRecords[dateISO] = {};
+    
+    // Check if we are deselecting
+    if (updatedRecords[dateISO] && updatedRecords[dateISO][subjectOrExtraId] === status) {
+      const dayRecord = { ...updatedRecords[dateISO] };
+      delete dayRecord[subjectOrExtraId];
+      if (Object.keys(dayRecord).length === 0) {
+        delete updatedRecords[dateISO];
+      } else {
+        updatedRecords[dateISO] = dayRecord;
+      }
+    } else {
+      if (!updatedRecords[dateISO]) {
+        updatedRecords[dateISO] = {};
+      }
+      updatedRecords[dateISO] = {
+        ...updatedRecords[dateISO],
+        [subjectOrExtraId]: status,
+      };
     }
-    updatedRecords[dateISO][subjectOrExtraId] = status;
 
     const updated: UserDocument = {
       ...data,

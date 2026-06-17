@@ -63,7 +63,7 @@ export default function TodayView() {
           <p className="text-[12px] font-bold text-indigo-600 uppercase tracking-widest mb-1 font-sans">
             {todayDayName}, {todayMonthDay}
           </p>
-          <h2 className="text-2xl font-extrabold text-slate-805 text-slate-800 font-sans">Today's Classes</h2>
+          <h2 className="text-[25px] font-extrabold text-slate-805 text-slate-800 dark:text-slate-100 font-sans">Today's Classes</h2>
         </div>
         <button
           onClick={() => setShowAddTodayExtra(!showAddTodayExtra)}
@@ -163,7 +163,7 @@ export default function TodayView() {
                   {/* Header info */}
                   <div className="flex justify-between items-start">
                     <div className="flex-1 pr-3">
-                      <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm leading-snug">
+                      <h3 className="font-bold text-slate-800 dark:text-slate-100 text-[18px] leading-snug">
                         {sub.name}
                       </h3>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
@@ -182,7 +182,7 @@ export default function TodayView() {
                     <button
                       type="button"
                       onClick={() => handleMark(sub.id, "present")}
-                      className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
+                      className={`flex-1 py-1.5 rounded-full text-[14px] font-bold transition-all cursor-pointer ${
                         currentStatus === "present"
                           ? "bg-green-500 text-white shadow-md shadow-green-150"
                           : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-450 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200"
@@ -193,7 +193,7 @@ export default function TodayView() {
                     <button
                       type="button"
                       onClick={() => handleMark(sub.id, "absent")}
-                      className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
+                      className={`flex-1 py-1.5 rounded-full text-[14px] font-bold transition-all cursor-pointer ${
                         currentStatus === "absent"
                           ? "bg-red-500 text-white shadow-md shadow-red-150"
                           : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-450 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200"
@@ -204,7 +204,7 @@ export default function TodayView() {
                     <button
                       type="button"
                       onClick={() => handleMark(sub.id, "cancelled")}
-                      className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
+                      className={`flex-1 py-1.5 rounded-full text-[14px] font-bold transition-all cursor-pointer ${
                         currentStatus === "cancelled"
                           ? "bg-slate-400 text-white shadow-sm"
                           : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-500"
@@ -250,7 +250,7 @@ export default function TodayView() {
                           Makeup Lecture
                         </span>
                       </div>
-                      <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm leading-snug mt-1">
+                      <h3 className="font-bold text-slate-800 dark:text-slate-100 text-[18px] leading-snug mt-1">
                         {sub.name}
                       </h3>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
@@ -284,7 +284,7 @@ export default function TodayView() {
                     <button
                       type="button"
                       onClick={() => handleMark(extraKey, "present")}
-                      className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
+                      className={`flex-1 py-1.5 rounded-full text-[14px] font-bold transition-all cursor-pointer ${
                         currentStatus === "present"
                           ? "bg-green-500 text-white shadow-md shadow-green-150"
                           : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-450 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200"
@@ -295,7 +295,7 @@ export default function TodayView() {
                     <button
                       type="button"
                       onClick={() => handleMark(extraKey, "absent")}
-                      className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
+                      className={`flex-1 py-1.5 rounded-full text-[14px] font-bold transition-all cursor-pointer ${
                         currentStatus === "absent"
                           ? "bg-red-500 text-white shadow-md shadow-red-150"
                           : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-450 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700"
@@ -306,7 +306,7 @@ export default function TodayView() {
                     <button
                       type="button"
                       onClick={() => handleMark(extraKey, "cancelled")}
-                      className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
+                      className={`flex-1 py-1.5 rounded-full text-[14px] font-bold transition-all cursor-pointer ${
                         currentStatus === "cancelled"
                           ? "bg-slate-400 text-white shadow-md shadow-slate-100"
                           : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700"
