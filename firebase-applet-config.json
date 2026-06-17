@@ -1,0 +1,9 @@
+{
+  "apiKey": "",
+  "authDomain": "",
+  "projectId": "attendtrack-user-db",
+  "storageBucket": "",
+  "messagingSenderId": "",
+  "appId": "",
+  "firestoreDatabaseId": "(default)"
+}

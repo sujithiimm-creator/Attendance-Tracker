@@ -1,0 +1,42 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Contains everything related to the user's subjects, attendance records, and extra classes",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Email address of the student"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Full display name of the student"
+        },
+        "subjects": {
+          "type": "array",
+          "description": "Active course modules list"
+        },
+        "records": {
+          "type": "object",
+          "description": "Attendance logs keyed by ISO date then by subject key or extra_ key"
+        },
+        "extraClasses": {
+          "type": "array",
+          "description": "Ad-hoc extra classes tied to specific subjects"
+        },
+        "updatedAt": {
+          "type": "object",
+          "description": "Firestore timestamp of last change"
+        }
+      },
+      "required": ["email", "displayName", "subjects", "records", "extraClasses"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "A single user profile and data sheet"
+    }
+  }
+}
