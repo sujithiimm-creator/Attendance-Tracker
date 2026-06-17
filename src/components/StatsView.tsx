@@ -26,19 +26,19 @@ export default function StatsView() {
   let feedbackDesc = "Your attendance overall is critically low. Prioritize attending future lectures.";
   let feedbackIcon = <AlertCircle className="w-5 h-5 text-red-500" />;
 
-  if (percentage >= 75) {
+  if (percentage >= 85) {
     themeColor = "#22c55e"; // Green
     themeBg = "bg-green-50 text-green-600";
     themeRingBackgroundPath = "stroke-green-50";
     feedbackTitle = "Debarment Threshold Cleared";
-    feedbackDesc = "Excellent! You are above the mandatory 75% limit set by academic regulators.";
+    feedbackDesc = "Excellent! You are above the mandatory 85% limit set by academic regulators.";
     feedbackIcon = <ShieldCheck className="w-5 h-5 text-green-500" />;
-  } else if (percentage >= 60) {
+  } else if (percentage >= 70) {
     themeColor = "#f59e0b"; // Amber
     themeBg = "bg-amber-50 text-amber-600";
     themeRingBackgroundPath = "stroke-amber-50";
     feedbackTitle = "Approaching Debarment Risk";
-    feedbackDesc = "Warning! Keep active attendance high in oncoming labs to cross standard 75% threshold.";
+    feedbackDesc = "Warning! Keep active attendance high in oncoming labs to cross standard 85% threshold.";
     feedbackIcon = <AlertTriangle className="w-5 h-5 text-amber-500" />;
   }
 
@@ -46,8 +46,9 @@ export default function StatsView() {
   const flaggedSubjects = stats.dangerSubjects;
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* 1. Global Percentage Hub */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-1 flex flex-col gap-6">
+        {/* 1. Global Percentage Hub */}
       <div className="bg-white rounded-[20px] border border-slate-200 p-6 shadow-sm flex flex-col items-center text-center gap-4">
         <div>
           <span className="text-xxs font-bold text-indigo-600 uppercase tracking-wider block">Consolidated Report</span>
@@ -113,13 +114,15 @@ export default function StatsView() {
           </div>
         </div>
       </div>
+      </div>
 
-      {/* 2. Flagged Danger Zone (< 75%) */}
+      <div className="lg:col-span-2 flex flex-col gap-6">
+        {/* 2. Flagged Danger Zone (< 85%) */}
       {flaggedSubjects.length > 0 && (
         <div className="bg-red-50/20 border border-red-200 rounded-[20px] p-5 shadow-sm flex flex-col gap-3.5">
           <div>
             <span className="text-xxs font-bold text-red-500 uppercase tracking-wider block">Compliance Warnings</span>
-            <h3 className="text-sm font-extrabold text-slate-800 mt-0.5">Danger List - Below 75%</h3>
+            <h3 className="text-sm font-extrabold text-slate-800 mt-0.5">Danger List - Below 85%</h3>
           </div>
 
           <div className="flex flex-col gap-3" id="flagged-subjects-list">
@@ -221,9 +224,9 @@ export default function StatsView() {
 
                   <div className="text-right shrink-0">
                     <span className={`text-[10px] font-black tracking-wide px-2 py-0.5 rounded border uppercase transition-all ${
-                      percentageVal >= 75
+                      percentageVal >= 85
                         ? "text-green-600 bg-green-50/50 border-green-200/50"
-                        : percentageVal >= 60
+                        : percentageVal >= 70
                         ? "text-amber-600 bg-amber-50/50 border-amber-200/50"
                         : "text-red-600 bg-red-50/50 border-red-200/50"
                     }`}>
@@ -235,6 +238,7 @@ export default function StatsView() {
             })
           )}
         </div>
+      </div>
       </div>
     </div>
   );

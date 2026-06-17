@@ -32,8 +32,9 @@ export default function TimetableView() {
     .sort((a, b) => a.date.localeCompare(b.date));
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* 1. Visual Weekly Grid */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2 flex flex-col gap-6">
+        {/* 1. Visual Weekly Grid */}
       <div className="bg-white rounded-[20px] border border-slate-200 p-5 shadow-sm flex flex-col gap-4">
         <div>
           <span className="text-xxs font-bold text-indigo-600 uppercase tracking-wider block">Timetable Grid</span>
@@ -137,7 +138,10 @@ export default function TimetableView() {
         </div>
       </div>
 
-      {/* 3. Upcoming Extra Classes */}
+      </div>
+
+      <div className="lg:col-span-1 flex flex-col gap-6">
+        {/* 3. Upcoming Extra Classes */}
       <div className="bg-white rounded-[20px] border border-slate-200 p-5 shadow-sm flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div>
@@ -197,6 +201,7 @@ export default function TimetableView() {
             })
           )}
         </div>
+      </div>
       </div>
     </div>
   );

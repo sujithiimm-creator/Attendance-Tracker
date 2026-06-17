@@ -84,7 +84,7 @@ export default function WeekView() {
       </div>
 
       {/* Week days roster */}
-      <div className="flex flex-col gap-4.5" id="week-days-list">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="week-days-list">
         {weekDays.map((day) => {
           const dayISO = getLocalDateString(day);
           const dayIndex = day.getDay(); // 0=Sun..6=Sat

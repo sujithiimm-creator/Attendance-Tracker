@@ -10,6 +10,17 @@ interface AddExtraClassModalProps {
   subjects: Subject[];
 }
 
+const standardSlots = [
+  "9:30 am to 11:00 am",
+  "11:10 am to 12:40 pm",
+  "12:50 pm to 14:20 pm",
+  "14:30 to 16:00",
+  "16:10 to 17:40",
+  "17:45 to 18:15",
+  "18:20 to 19:50",
+  "20:00 to 21:30"
+];
+
 export default function AddExtraClassModal({
   isOpen,
   onClose,
@@ -18,7 +29,8 @@ export default function AddExtraClassModal({
 }: AddExtraClassModalProps) {
   const [subjectId, setSubjectId] = useState(subjects[0]?.id || "");
   const [date, setDate] = useState(getLocalDateString(new Date()));
-  const [time, setTime] = useState("2:30–4:00 PM");
+  const [selectedSlot, setSelectedSlot] = useState("9:30 am to 11:00 am");
+  const [customTime, setCustomTime] = useState("");
   const [note, setNote] = useState("Rm 305 · Extra make-up class");
   const [isSaving, setIsSaving] = useState(false);
 
@@ -26,14 +38,15 @@ export default function AddExtraClassModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!subjectId || !date || !time) return;
+    const finalTime = selectedSlot === "Custom" ? customTime : selectedSlot;
+    if (!subjectId || !date || !finalTime.trim()) return;
 
     setIsSaving(true);
     try {
       await onSave({
         subjectId,
         date,
-        time: time.trim(),
+        time: finalTime.trim(),
         note: note.trim(),
       });
       onClose();
@@ -45,20 +58,20 @@ export default function AddExtraClassModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-xxs animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/40 backdrop-blur-xxs animate-fade-in">
       {/* Background click handler */}
       <div className="absolute inset-0" onClick={onClose} />
 
-      {/* Bottom sheet panel */}
+      {/* Pop up or bottom sheet container */}
       <div 
         id="extra-class-modal-content"
-        className="relative w-full max-w-[430px] bg-white rounded-t-3xl shadow-2xl border-t border-slate-100 flex flex-col max-h-[90vh] overflow-hidden animate-slide-up duration-300"
+        className="relative w-full max-w-[430px] md:max-w-md bg-white rounded-t-3xl md:rounded-3xl shadow-2xl border border-slate-100 flex flex-col max-h-[90vh] overflow-hidden animate-slide-up duration-300"
       >
         {/* Drag handle decoration */}
-        <div className="mx-auto my-3 w-12 h-1.5 bg-slate-200 rounded-full shrink-0" />
+        <div className="mx-auto my-3 w-12 h-1.5 bg-slate-200 rounded-full shrink-0 md:hidden" />
 
         {/* Header */}
-        <div className="px-5 pb-4 flex items-center justify-between border-b border-slate-100">
+        <div className="px-5 py-4 flex items-center justify-between border-b border-slate-100">
           <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-indigo-500" />
             <span>Schedule Extra Class</span>
@@ -76,7 +89,7 @@ export default function AddExtraClassModal({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="px-5 py-5 flex flex-col gap-4 overflow-y-auto">
           {subjects.length === 0 ? (
-            <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 flex flex-col gap-2 text-center text-amber-700 text-xs">
+            <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 flex flex-col gap-2 text-center text-amber-700 text-xs col-span-full">
               <AlertCircle className="w-6 h-6 mx-auto" />
               <span>Create at least one subject under the <b>Subjects</b> tab before scheduling an extra class.</span>
             </div>
@@ -119,22 +132,41 @@ export default function AddExtraClassModal({
                 />
               </div>
 
-              {/* Time */}
+              {/* Time Slot Dropdown */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-slate-500 flex items-center gap-1" htmlFor="extra-time">
+                <label className="text-xs font-semibold text-slate-500 flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5" />
                   <span>Lecture Timing Window</span>
                 </label>
-                <input
-                  id="extra-time"
-                  type="text"
-                  placeholder="e.g. 2:30–4:00 PM"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 focus:bg-white text-slate-700 transition"
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  required
-                />
+                <select
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 focus:bg-white text-slate-800 transition"
+                  value={selectedSlot}
+                  onChange={(e) => setSelectedSlot(e.target.value)}
+                >
+                  {standardSlots.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                  <option value="Custom">Custom Timing...</option>
+                </select>
               </div>
+
+              {/* Custom Time Input */}
+              {selectedSlot === "Custom" && (
+                <div className="flex flex-col gap-1.5 animate-fade-in">
+                  <label className="text-xs font-semibold text-slate-500" htmlFor="extra-time-custom">
+                    Custom Time Details
+                  </label>
+                  <input
+                    id="extra-time-custom"
+                    type="text"
+                    placeholder="e.g. 2:30–4:00 PM"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 focus:bg-white text-slate-700 transition"
+                    value={customTime}
+                    onChange={(e) => setCustomTime(e.target.value)}
+                    required
+                  />
+                </div>
+              )}
 
               {/* Notes */}
               <div className="flex flex-col gap-1.5">

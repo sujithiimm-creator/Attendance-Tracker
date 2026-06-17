@@ -28,8 +28,10 @@ export default function AuthScreen() {
     try {
       if (activeTab === "login") {
         await signInWithEmail(email, password);
+        localStorage.setItem("attendtrack_toast", "welcome_back");
       } else {
         await signUpWithEmail(email, password, displayName);
+        localStorage.setItem("attendtrack_toast", "registered_successfully");
       }
     } catch (err: any) {
       setError(err?.message || "Authentication failed. Please verify credentials.");
@@ -43,6 +45,7 @@ export default function AuthScreen() {
     setLoading(true);
     try {
       await signInWithGoogle();
+      localStorage.setItem("attendtrack_toast", "welcome_back");
     } catch (err: any) {
       setError(err?.message || "Google Sign-In failed.");
     } finally {

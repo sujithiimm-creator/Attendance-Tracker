@@ -53,10 +53,10 @@ export default function TodayView() {
       </section>
 
       {/* Lectures Checklist */}
-      <div className="flex flex-col gap-4" id="today-classes-cards-container">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" id="today-classes-cards-container">
         {todayRegularSubjects.length === 0 && todayExtraClasses.length === 0 ? (
           /* Empty State */
-          <div className="bg-white rounded-[24px] border border-slate-205 border-slate-200 p-8 text-center flex flex-col items-center justify-center gap-3 shadow-sm">
+          <div className="bg-white rounded-[24px] border border-slate-205 border-slate-200 p-8 text-center flex flex-col items-center justify-center gap-3 shadow-sm col-span-full">
             <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500">
               <Coffee className="w-6 h-6" />
             </div>
@@ -235,8 +235,8 @@ export default function TodayView() {
             <h4 className="text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-0.5">Overall Attendance</h4>
             <div className="flex items-baseline gap-1.5">
               <span className="text-3xl font-black">{roundedPercentage}%</span>
-              <span className={`text-xxs font-extrabold ${overallStats.percentage >= 75 ? "text-green-400" : "text-amber-400"}`}>
-                {overallStats.percentage >= 75 ? "✓ Safe" : "⚠ Low"}
+              <span className={`text-xxs font-extrabold ${overallStats.percentage >= 85 ? "text-green-400" : "text-amber-400"}`}>
+                {overallStats.percentage >= 85 ? "✓ Safe" : "⚠ Low"}
               </span>
             </div>
             <p className="text-[10px] text-slate-400 font-medium mt-1.5">
@@ -252,7 +252,7 @@ export default function TodayView() {
                 cx="32"
                 cy="32"
                 r={innerRadius}
-                stroke={overallStats.percentage >= 75 ? "#22c55e" : overallStats.percentage >= 60 ? "#f59e0b" : "#ef4444"}
+                stroke={overallStats.percentage >= 85 ? "#22c55e" : overallStats.percentage >= 70 ? "#f59e0b" : "#ef4444"}
                 strokeWidth="5.5"
                 fill="transparent"
                 strokeDasharray={`${miniCircumference} ${miniCircumference}`}

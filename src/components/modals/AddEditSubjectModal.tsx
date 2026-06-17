@@ -19,6 +19,43 @@ const DAYS_REF = [
   { val: 0, label: "Sun" },
 ];
 
+const standardSlots = [
+  "9:30 am to 11:00 am",
+  "11:10 am to 12:40 pm",
+  "12:50 pm to 14:20 pm",
+  "14:30 to 16:00",
+  "16:10 to 17:40",
+  "17:45 to 18:15",
+  "18:20 to 19:50",
+  "20:00 to 21:30"
+];
+
+function parseSchedule(valStr: string) {
+  if (!valStr) {
+    return {
+      slot: "9:30 am to 11:00 am",
+      room: "Rm 206",
+      staff: "Prof. Date",
+      customSlot: ""
+    };
+  }
+  const parts = valStr.split(" · ").map(p => p.trim());
+  const rawSlot = parts[0] || "9:30 am to 11:00 am";
+  const room = parts[1] || "Rm 206";
+  const staff = parts[2] || "Prof. Date";
+
+  const matched = standardSlots.find(s => 
+    s.toLowerCase().replace(/[\s–-]/g, "") === rawSlot.toLowerCase().replace(/[\s–-]/g, "")
+  );
+
+  return {
+    slot: matched ? matched : "Custom",
+    customSlot: matched ? "" : rawSlot,
+    room,
+    staff
+  };
+}
+
 export default function AddEditSubjectModal({
   isOpen,
   onClose,
@@ -28,7 +65,6 @@ export default function AddEditSubjectModal({
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
-  // Keep track of daytimes keyed by dayIndex
   const [dayTimes, setDayTimes] = useState<{ [dayIndex: string]: string }>({});
   const [isSaving, setIsSaving] = useState(false);
 
@@ -58,15 +94,17 @@ export default function AddEditSubjectModal({
       setSelectedDays([...selectedDays, dayVal].sort());
       setDayTimes({
         ...dayTimes,
-        [String(dayVal)]: "9:30–11:00 AM · Rm 206 · Prof. X",
+        [String(dayVal)]: "9:30 am to 11:00 am · Rm 206 · Prof. Date",
       });
     }
   };
 
-  const handleTimeChange = (dayVal: number, value: string) => {
+  const updateDayTime = (dayVal: number, newSlot: string, newCustomSlot: string, newRoom: string, newStaff: string) => {
+    const finalSlot = newSlot === "Custom" ? newCustomSlot : newSlot;
+    const finalStr = `${finalSlot} · ${newRoom} · ${newStaff}`;
     setDayTimes({
       ...dayTimes,
-      [String(dayVal)]: value,
+      [String(dayVal)]: finalStr
     });
   };
 
@@ -95,20 +133,20 @@ export default function AddEditSubjectModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-xxs">
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/40 backdrop-blur-xxs">
       {/* Background click close handler */}
       <div className="absolute inset-0" onClick={onClose} />
       
-      {/* Bottom sheet panel */}
+      {/* Bottom sheet / popup panel */}
       <div 
         id="subject-modal-content"
-        className="relative w-full max-w-[430px] bg-white rounded-t-3xl shadow-2xl border-t border-slate-100 flex flex-col max-h-[90vh] overflow-hidden animate-slide-up duration-300"
+        className="relative w-full max-w-[430px] md:max-w-xl bg-white rounded-t-3xl md:rounded-3xl shadow-2xl border border-slate-100 flex flex-col max-h-[90vh] overflow-hidden animate-slide-up duration-300"
       >
-        {/* Drag handle decoration */}
-        <div className="mx-auto my-3 w-12 h-1.5 bg-slate-200 rounded-full shrink-0" />
+        {/* Drag handle decoration (only visible/styled on mobile) */}
+        <div className="mx-auto my-3 w-12 h-1.5 bg-slate-200 rounded-full shrink-0 md:hidden" />
         
         {/* Header */}
-        <div className="px-5 pb-4 flex items-center justify-between border-b border-slate-100">
+        <div className="px-5 py-4 flex items-center justify-between border-b border-slate-100">
           <h3 className="text-lg font-bold text-slate-800">
             {subjectToEdit ? "Edit Subject Details" : "Add New Subject"}
           </h3>
@@ -123,8 +161,8 @@ export default function AddEditSubjectModal({
         </div>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-4">
+          <div className="flex flex-col gap-1.55">
             <label className="text-xs font-semibold text-slate-500" htmlFor="subj-name">
               Subject Name
             </label>
@@ -168,7 +206,7 @@ export default function AddEditSubjectModal({
                     id={`day-pill-${day.val}`}
                     type="button"
                     onClick={() => toggleDay(day.val)}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-all ${
+                    className={`px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all ${
                       isSelected
                         ? "bg-indigo-500 border-indigo-500 text-white shadow-md shadow-indigo-150"
                         : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-300"
@@ -183,29 +221,87 @@ export default function AddEditSubjectModal({
 
           {/* Time fields based on selected days */}
           {selectedDays.length > 0 && (
-            <div className="flex flex-col gap-3 mt-1.5 border-t border-slate-100 pt-3">
-              <span className="text-xs font-bold text-slate-600">
-                Setup Class Timings & Metadata
+            <div className="flex flex-col gap-4 mt-2 border-t border-slate-100 pt-4">
+              <span className="text-xs font-bold text-slate-600 block">
+                Class Schedule & Instructor Setup
               </span>
               
               {selectedDays.map((dayVal) => {
                 const dayRef = DAYS_REF.find((d) => d.val === dayVal);
+                const currentTimeStr = dayTimes[String(dayVal)] || "9:30 am to 11:00 am · Rm 206 · Prof. Date";
+                const { slot, customSlot, room, staff } = parseSchedule(currentTimeStr);
+
                 return (
-                  <div key={dayVal} className="flex flex-col gap-1.5 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-indigo-600">
-                        {dayRef?.label} Schedule
-                      </span>
+                  <div key={dayVal} className="flex flex-col gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <span className="text-xs font-extrabold text-indigo-600 border-b border-slate-200/50 pb-1.5">
+                      {dayRef?.label} Schedule
+                    </span>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {/* Drop-down Timing */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                          Timing Window
+                        </label>
+                        <select
+                          className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs outline-none focus:border-indigo-450 focus:border-indigo-400 transition text-slate-700"
+                          value={slot}
+                          onChange={(e) => updateDayTime(dayVal, e.target.value, customSlot, room, staff)}
+                        >
+                          {standardSlots.map(s => (
+                            <option key={s} value={s}>{s}</option>
+                          ))}
+                          <option value="Custom">Custom Timing...</option>
+                        </select>
+                      </div>
+
+                      {/* Custom Input */}
+                      {slot === "Custom" && (
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            Enter Timing
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 10:00 am to 11:30 am"
+                            className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs outline-none focus:border-indigo-400 transition text-slate-700"
+                            value={customSlot}
+                            onChange={(e) => updateDayTime(dayVal, "Custom", e.target.value, room, staff)}
+                            required
+                          />
+                        </div>
+                      )}
+
+                      {/* Room Location */}
+                      <div className="flex flex-col gap-1 border-transparent">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                          Classroom Location
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Rm 206"
+                          className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs outline-none focus:border-indigo-400 transition text-slate-700"
+                          value={room}
+                          onChange={(e) => updateDayTime(dayVal, slot, customSlot, e.target.value, staff)}
+                          required
+                        />
+                      </div>
+
+                      {/* Instructor/Professor */}
+                      <div className="flex flex-col gap-1 md:col-span-2">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                          Professor / Staff Name
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Prof. Date"
+                          className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs outline-none focus:border-indigo-400 transition text-slate-700"
+                          value={staff}
+                          onChange={(e) => updateDayTime(dayVal, slot, customSlot, room, e.target.value)}
+                          required
+                        />
+                      </div>
                     </div>
-                    <input
-                      id={`day-time-input-${dayVal}`}
-                      type="text"
-                      placeholder="e.g. 9:30–11:00 AM · Rm 206 · Prof. Date"
-                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-indigo-400 transition text-slate-700"
-                      value={dayTimes[String(dayVal)] || ""}
-                      onChange={(e) => handleTimeChange(dayVal, e.target.value)}
-                      required
-                    />
                   </div>
                 );
               })}

@@ -8,14 +8,14 @@ import AddExtraClassModal from "./modals/AddExtraClassModal";
 
 // Helper for status colors
 export function getStatusColorHex(percentage: number): string {
-  if (percentage >= 75) return "#22c55e"; // Green
-  if (percentage >= 60) return "#f59e0b"; // Amber (warning)
+  if (percentage >= 85) return "#22c55e"; // Green
+  if (percentage >= 70) return "#f59e0b"; // Amber (warning)
   return "#ef4444"; // Red
 }
 
 export function getStatusColorTextClass(percentage: number): string {
-  if (percentage >= 75) return "text-green-600 bg-green-50/50 border-green-150";
-  if (percentage >= 60) return "text-amber-600 bg-amber-50/50 border-amber-150";
+  if (percentage >= 85) return "text-green-600 bg-green-50/50 border-green-150";
+  if (percentage >= 70) return "text-amber-600 bg-amber-50/50 border-amber-150";
   return "text-red-600 bg-red-50/50 border-red-150";
 }
 
@@ -83,9 +83,9 @@ export default function SubjectsView() {
       </div>
 
       {/* Roster layout */}
-      <div className="flex flex-col gap-5" id="subjects-cards-list">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="subjects-cards-list">
         {data.subjects.length === 0 ? (
-          <div className="bg-white rounded-[20px] border border-slate-200 p-8 text-center flex flex-col items-center justify-center gap-3">
+          <div className="bg-white rounded-[20px] border border-slate-200 p-8 text-center flex flex-col items-center justify-center gap-3 col-span-full">
             <LayoutGrid className="w-10 h-10 text-slate-350" />
             <h4 className="text-sm font-extrabold text-slate-700">No subjects registered</h4>
             <p className="text-xs text-slate-400 max-w-[2400px]">
@@ -196,7 +196,7 @@ export default function SubjectsView() {
                   </div>
                   <div className="flex flex-col border-l border-slate-100 items-center justify-center">
                     <span className={`font-black uppercase text-[8px] tracking-wider px-2 py-0.5 rounded-full border ${statusBadgeTextClass}`}>
-                      {stats.percentage >= 75 ? "Safe" : "Low"}
+                      {stats.percentage >= 85 ? "Safe" : "Low"}
                     </span>
                   </div>
                 </div>

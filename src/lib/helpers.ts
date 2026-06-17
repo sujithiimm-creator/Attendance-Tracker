@@ -138,7 +138,7 @@ export function calculateOverallStats(
 
   const totalActive = totalPresent + totalAbsent;
   const percentage = totalActive > 0 ? (totalPresent / totalActive) * 100 : 100;
-  const dangerSubjects = subjectStatsList.filter(s => s.percentage < 75);
+  const dangerSubjects = subjectStatsList.filter(s => s.percentage < 85);
 
   return {
     percentage,
