@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useData } from "../context/DataContext";
 import { Subject, ExtraClass, AttendanceStatus } from "../types";
-import { getLocalDateString, DAY_NAMES, calculateOverallStats } from "../lib/helpers";
-import { Coffee, ChevronRight, Calendar, Plus } from "lucide-react";
+import { getLocalDateString, DAY_NAMES, calculateSubjectStats } from "../lib/helpers";
+import { Coffee, ChevronRight, Calendar, Plus, Trash2 } from "lucide-react";
 
 export default function TodayView() {
-  const { data, markAttendance, addExtraClass } = useData();
+  const { data, markAttendance, addExtraClass, deleteExtraClass } = useData();
 
   const [showAddTodayExtra, setShowAddTodayExtra] = useState(false);
   const [todayExtraSubjectId, setTodayExtraSubjectId] = useState("");
@@ -54,15 +54,6 @@ export default function TodayView() {
 
   const todayDayName = todayDate.toLocaleDateString("en-US", { weekday: "long" });
   const todayMonthDay = todayDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-
-  // Calculate live overall statistics for the bottom summary card
-  const overallStats = calculateOverallStats(data.subjects, data.records, data.extraClasses);
-  const roundedPercentage = Math.round(overallStats.percentage);
-  
-  // Custom progress ring computation
-  const innerRadius = 26;
-  const miniCircumference = 2 * Math.PI * innerRadius; // ~163.36
-  const strokeDashoffset = miniCircumference - (overallStats.percentage / 100) * miniCircumference;
 
   return (
     <div className="flex flex-col gap-6 min-h-full pb-2">
@@ -152,6 +143,7 @@ export default function TodayView() {
             {todayRegularSubjects.map((sub) => {
               const currentStatus = todayRecords[sub.id];
               const timeDetails = sub.dayTimes[String(todayDayIndex)] || "Timings pending";
+              const stats = calculateSubjectStats(sub, data.records, data.extraClasses);
 
               // Color code the left stripe relative to mark status
               let stripeColor = "bg-indigo-500";
@@ -163,7 +155,7 @@ export default function TodayView() {
                 <div
                   key={sub.id}
                   id={`today-card-${sub.id}`}
-                  className="bg-white border border-slate-200 rounded-[20px] p-4.5 shadow-sm relative overflow-hidden flex flex-col gap-4"
+                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[20px] p-4.5 shadow-sm relative overflow-hidden flex flex-col justify-between gap-4"
                 >
                   {/* Color stripe */}
                   <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${stripeColor}`} />
@@ -171,27 +163,29 @@ export default function TodayView() {
                   {/* Header info */}
                   <div className="flex justify-between items-start">
                     <div className="flex-1 pr-3">
-                      <h3 className="font-bold text-slate-800 text-base leading-snug">
+                      <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm leading-snug">
                         {sub.name}
                       </h3>
-                      <p className="text-[12px] text-slate-500 font-medium mt-1">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
                         {timeDetails}
                       </p>
                     </div>
-                    <span className="bg-indigo-50 text-indigo-600 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase shrink-0 tracking-wider">
+                    <span className="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 text-[9px] px-2 py-0.5 rounded-md font-black uppercase shrink-0 tracking-wider">
                       {sub.code}
                     </span>
                   </div>
 
-                  {/* Marking Pills */}
-                  <div className="flex gap-2" id={`marking-btns-${sub.id}`}>
+
+
+                  {/* Marking Pills style synced with week deck view */}
+                  <div className="flex gap-1.5" id={`marking-btns-${sub.id}`}>
                     <button
                       type="button"
                       onClick={() => handleMark(sub.id, "present")}
-                      className={`flex-1 py-2 rounded-full text-xs font-bold transition-all ${
+                      className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
                         currentStatus === "present"
                           ? "bg-green-500 text-white shadow-md shadow-green-150"
-                          : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                          : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-450 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200"
                       }`}
                     >
                       Present
@@ -199,10 +193,10 @@ export default function TodayView() {
                     <button
                       type="button"
                       onClick={() => handleMark(sub.id, "absent")}
-                      className={`flex-1 py-11 py-2 rounded-full text-xs font-bold transition-all ${
+                      className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
                         currentStatus === "absent"
                           ? "bg-red-500 text-white shadow-md shadow-red-150"
-                          : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                          : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-450 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200"
                       }`}
                     >
                       Absent
@@ -210,10 +204,10 @@ export default function TodayView() {
                     <button
                       type="button"
                       onClick={() => handleMark(sub.id, "cancelled")}
-                      className={`flex-1 py-2 rounded-full text-xs font-bold transition-all ${
+                      className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
                         currentStatus === "cancelled"
-                          ? "bg-slate-400 text-white shadow-md shadow-slate-100"
-                          : "bg-white border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-slate-500"
+                          ? "bg-slate-400 text-white shadow-sm"
+                          : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-500"
                       }`}
                     >
                       Cancel
@@ -231,6 +225,8 @@ export default function TodayView() {
 
               if (!sub) return null;
 
+              const stats = calculateSubjectStats(sub, data.records, data.extraClasses);
+
               // Color-coded stripe
               let stripeColor = "bg-amber-500";
               if (currentStatus === "present") stripeColor = "bg-green-500";
@@ -241,40 +237,57 @@ export default function TodayView() {
                 <div
                   key={ex.id}
                   id={`today-extra-card-${ex.id}`}
-                  className="bg-white border border-slate-200 rounded-[20px] p-4.5 shadow-sm relative overflow-hidden flex flex-col gap-4"
+                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[20px] p-4.5 shadow-sm relative overflow-hidden flex flex-col justify-between gap-4"
                 >
                   {/* Left color stripe */}
                   <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${stripeColor}`} />
 
                   {/* Header info */}
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1 pr-3">
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="flex-1 pr-1">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[9px] bg-amber-100 text-amber-800 font-extrabold uppercase px-1.5 py-0.5 rounded tracking-wide">
+                        <span className="text-[8px] bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-400 font-extrabold uppercase px-1.5 py-0.5 rounded tracking-wide">
                           Makeup Lecture
                         </span>
                       </div>
-                      <h3 className="font-bold text-slate-800 text-base leading-snug mt-1">
+                      <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm leading-snug mt-1">
                         {sub.name}
                       </h3>
-                      <p className="text-[12px] text-slate-500 font-medium mt-1">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
                         {ex.time} {ex.note ? `· ${ex.note}` : ""}
                       </p>
                     </div>
-                    <span className="bg-amber-50 text-amber-700 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase shrink-0 tracking-wider">
-                      {sub.code}
-                    </span>
+
+                    <div className="flex flex-col items-end gap-1.5 shrink-0">
+                      <span className="bg-amber-55 bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 text-[9px] px-2 py-0.5 rounded-md font-black uppercase tracking-wider">
+                        {sub.code}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (confirm(`Do you want to delete this scheduled makeup class for ${sub.name}?`)) {
+                            await deleteExtraClass(ex.id);
+                          }
+                        }}
+                        className="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition cursor-pointer"
+                        title="Delete Makeup Class"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 shrink-0" />
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Marking Action Tray */}
-                  <div className="flex gap-2" id={`marking-btns-extra-${ex.id}`}>
+
+
+                  {/* Marking Action Tray style synced with week deck view */}
+                  <div className="flex gap-1.5" id={`marking-btns-extra-${ex.id}`}>
                     <button
                       type="button"
                       onClick={() => handleMark(extraKey, "present")}
-                      className={`flex-1 py-2 rounded-full text-xs font-bold transition-all ${
+                      className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
                         currentStatus === "present"
                           ? "bg-green-500 text-white shadow-md shadow-green-150"
-                          : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                          : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-450 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200"
                       }`}
                     >
                       Present
@@ -282,10 +295,10 @@ export default function TodayView() {
                     <button
                       type="button"
                       onClick={() => handleMark(extraKey, "absent")}
-                      className={`flex-1 py-2 rounded-full text-xs font-bold transition-all ${
+                      className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
                         currentStatus === "absent"
                           ? "bg-red-500 text-white shadow-md shadow-red-150"
-                          : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
+                          : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-450 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700"
                       }`}
                     >
                       Absent
@@ -293,10 +306,10 @@ export default function TodayView() {
                     <button
                       type="button"
                       onClick={() => handleMark(extraKey, "cancelled")}
-                      className={`flex-1 py-2 rounded-full text-xs font-bold transition-all ${
+                      className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
                         currentStatus === "cancelled"
                           ? "bg-slate-400 text-white shadow-md shadow-slate-100"
-                          : "bg-white border border-slate-200 text-slate-400 hover:bg-slate-50"
+                          : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700"
                       }`}
                     >
                       Cancel
@@ -309,45 +322,84 @@ export default function TodayView() {
         )}
       </div>
 
-      {/* Summary / Quick Stats Live Card */}
-      <div className="mt-auto pt-3" id="today-compact-stats-banner">
-        <div className="bg-slate-900 rounded-[24px] p-5 flex items-center justify-between text-white shadow-xl">
-          <div>
-            <h4 className="text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-0.5">Overall Attendance</h4>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-black">{roundedPercentage}%</span>
-              <span className={`text-xxs font-extrabold ${overallStats.percentage >= 85 ? "text-green-400" : "text-amber-400"}`}>
-                {overallStats.percentage >= 85 ? "✓ Safe" : "⚠ Low"}
-              </span>
-            </div>
-            <p className="text-[10px] text-slate-400 font-medium mt-1.5">
-              Cumulative tracker · Mod 5 Regulatory Goal
-            </p>
-          </div>
-
-          {/* Elegant Circular Progress SVG */}
-          <div className="relative w-16 h-16 flex items-center justify-center shrink-0">
-            <svg className="w-full h-full rotate-[-90deg]">
-              <circle cx="32" cy="32" r={innerRadius} stroke="#1e293b" strokeWidth="5.5" fill="transparent" />
-              <circle
-                cx="32"
-                cy="32"
-                r={innerRadius}
-                stroke={overallStats.percentage >= 85 ? "#22c55e" : overallStats.percentage >= 70 ? "#f59e0b" : "#ef4444"}
-                strokeWidth="5.5"
-                fill="transparent"
-                strokeDasharray={`${miniCircumference} ${miniCircumference}`}
-                style={{ strokeDashoffset }}
-                strokeLinecap="round"
-                className="transition-all duration-300"
-              />
-            </svg>
-            <span className="absolute text-[11px] font-extrabold text-white">
-              {roundedPercentage}%
-            </span>
-          </div>
+      {/* Subject-Wise Analytics Section */}
+      <section className="mt-8 border-t border-slate-200 dark:border-slate-800 pt-6">
+        <div className="flex flex-col gap-1 mb-4">
+          <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 font-sans tracking-tight">
+            Subject Attendance Analytics
+          </h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            Visual metrics tracker for all registered courses. Safe threshold is <b className="text-indigo-650 dark:text-indigo-400 font-black">85%</b> of Conducted Lectures.
+          </p>
         </div>
-      </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="subject-wise-progress-container">
+          {data.subjects.length === 0 ? (
+            <div className="col-span-full py-6 text-center text-xs text-slate-400">
+              No registered subjects to analyze. Configure your timetable first.
+            </div>
+          ) : (
+            data.subjects.map((sub) => {
+              const stats = calculateSubjectStats(sub, data.records, data.extraClasses);
+              const isSafe = stats.percentage >= 85;
+              
+              return (
+                <div
+                  key={sub.id}
+                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4.5 shadow-xs flex flex-col justify-between gap-3 min-h-[125px] transition-all hover:shadow-sm"
+                >
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="flex-1 pr-1">
+                      <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm leading-snug">
+                        {sub.name}
+                      </h4>
+                      <span className="text-[10px] uppercase font-bold text-indigo-600 dark:text-indigo-400 tracking-wider">
+                        {sub.code}
+                      </span>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className={`text-[12px] font-black px-2 py-0.5 rounded-md tracking-wider ${
+                        isSafe
+                          ? "bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-400"
+                          : "bg-amber-50 text-amber-700 dark:bg-amber-950/45 dark:text-amber-400"
+                      }`}>
+                        {stats.percentage.toFixed(0)}%
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar Container */}
+                  <div className="w-full">
+                    <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 mt-1 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          isSafe ? "bg-green-500" : "bg-amber-500"
+                        }`}
+                        style={{ width: `${Math.min(100, stats.percentage)}%` }}
+                      />
+                    </div>
+
+                    {/* Details list below progress bar */}
+                    <div className="flex items-center gap-3.5 text-[10px] text-slate-550 dark:text-slate-400 mt-2.5 font-medium">
+                      <span>
+                        Conducted: <strong className="text-slate-800 dark:text-slate-205 font-extrabold">{stats.totalActive}</strong>
+                      </span>
+                      <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+                      <span>
+                        Present: <strong className="text-green-600 dark:text-green-400 font-extrabold">{stats.presentCount}</strong>
+                      </span>
+                      <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+                      <span>
+                        Absent: <strong className="text-red-500 dark:text-red-400 font-extrabold">{stats.absentCount}</strong>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </section>
     </div>
   );
 }

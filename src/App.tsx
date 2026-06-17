@@ -22,7 +22,7 @@ import {
   Moon
 } from "lucide-react";
 
-type TabType = "today" | "week" | "subjects" | "timetable";
+type TabType = "today" | "week" | "timetable";
 
 function MainAppContent() {
   const { user, logout, isMock } = useAuth();
@@ -88,15 +88,6 @@ function MainAppContent() {
         return <WeekView />;
       case "timetable":
         return <TimetableView />;
-      case "subjects":
-        return (
-          <div className="flex flex-col gap-8">
-            <StatsView />
-            <div className="border-t border-slate-205 border-slate-200 dark:border-slate-800 pt-8 mt-4">
-              <SubjectsView />
-            </div>
-          </div>
-        );
       default:
         return <TodayView />;
     }
@@ -212,7 +203,6 @@ function MainAppContent() {
           {[
             { id: "today", label: "Today's Schedule" },
             { id: "week", label: "Attendance Deck" },
-            { id: "subjects", label: "Modules & Analytics" },
             { id: "timetable", label: "Time Table Setter" },
           ].map((tab) => {
             const isSelected = activeTab === tab.id;

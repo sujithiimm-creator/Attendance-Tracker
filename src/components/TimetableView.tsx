@@ -241,13 +241,6 @@ export default function TimetableView() {
     }
   };
 
-  // Fast reset/load matching user sample `#D,0,16,23,55,59,75,81`
-  const handleLoadDemoHash = () => {
-    setSelectedSection("D");
-    setSelectedElectives([0, 23, 55, 59]); // Elective IDs for slots 1, 4, 9, 10
-    setToastMessage("Reset & Loaded selection corresponding to #D,0,16,23,55,59,75,81!");
-  };
-
   // Submit build to Firestore/DataContext
   const handleConfirmAndSync = async () => {
     const mappedSubjects = activeBuildCourses.map(mapCourseToSubject);
@@ -296,17 +289,8 @@ export default function TimetableView() {
               </p>
             </div>
             
-            <div className="flex items-center gap-2.5 shrink-0">
-              <button
-                type="button"
-                onClick={handleLoadDemoHash}
-                className="px-4 py-2 bg-indigo-800 hover:bg-indigo-700 border border-indigo-600 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                Load Demo Hash (Sec D)
-              </button>
-              
-              {hasSubjects && (
+            {hasSubjects && (
+              <div className="flex items-center gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsBuilderMode(false)}
@@ -314,8 +298,8 @@ export default function TimetableView() {
                 >
                   Cancel
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
