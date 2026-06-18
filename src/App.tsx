@@ -153,9 +153,17 @@ function MainAppContent() {
         
         {/* 1. Header Area */}
         <header className="bg-white dark:bg-slate-900 px-6 pt-5 pb-3 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center shrink-0">
-          <div>
-            <h1 className="text-xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">AttendTrack</h1>
-            {renderSyncIndicator()}
+          <div className="flex items-center gap-3">
+            <img 
+              src="/logo.svg" 
+              alt="AttendTrack Logo" 
+              className="w-10 h-10 rounded-xl shadow-md border border-slate-200 dark:border-indigo-950 shrink-0 object-cover" 
+              referrerPolicy="no-referrer"
+            />
+            <div>
+              <h1 className="text-xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">AttendTrack</h1>
+              {renderSyncIndicator()}
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-indigo-50 dark:bg-slate-800 border border-indigo-100 dark:border-slate-700 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-xs uppercase" title={user.displayName || user.email || ""}>

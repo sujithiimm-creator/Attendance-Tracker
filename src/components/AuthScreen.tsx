@@ -47,9 +47,12 @@ export default function AuthScreen() {
         
         {/* Branding */}
         <div className="flex flex-col items-center text-center gap-2">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-500 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
-            <BookOpen className="w-8 h-8" />
-          </div>
+          <img 
+            src="/logo.svg" 
+            alt="AttendTrack Logo" 
+            className="w-16 h-16 rounded-2xl shadow-lg border border-slate-100 object-cover" 
+            referrerPolicy="no-referrer"
+          />
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight mt-2">AttendTrack</h1>
           <p className="text-xs text-slate-400 max-w-[280px]">
             Class attendance manager for IIM Mumbai MBA (Mod 5)
