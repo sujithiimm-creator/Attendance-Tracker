@@ -10,9 +10,9 @@ export const DEFAULT_SUBJECTS: Subject[] = [
   { id: "sub_aifd", name: "AI-Powered Financial Decision Architecture", code: "AIFD", days: [5],
     dayTimes: { "5": "2:30–4:00 PM & 4:10–5:40 PM · Rm 305 · Mr. Pallav Agarwal" } },
   { id: "sub_sm", name: "Strategic Management", code: "SM", days: [3,4],
-    dayTimes: { "3": "2:30–4:00 PM · Rm 207 · Prof. Utpal Chattopadhyay", "4": "2:30–4:00 PM · Rm 207 · Prof. Utpal Chattopadhyay" } },
+    dayTimes: { "3": "4:10–5:40 PM · Rm 202 · Prof. Utpal Chattopadhyay", "4": "4:10–5:40 PM · Rm 202 · Prof. Utpal Chattopadhyay" } },
   { id: "sub_ld", name: "Leadership Development", code: "LD", days: [3,4],
-    dayTimes: { "3": "4:10–5:40 PM · Rm 202 · Prof. Sumi Jha", "4": "4:10–5:40 PM · Rm 202 · Prof. Sumi Jha" } },
+    dayTimes: { "3": "2:30–4:00 PM · Rm 207 · Prof. Sumi Jha", "4": "2:30–4:00 PM · Rm 207 · Prof. Sumi Jha" } },
 ];
 
 // Helper to get formatted ISO date "YYYY-MM-DD" adjusted to local time timezone offset
