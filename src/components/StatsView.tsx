@@ -190,7 +190,7 @@ export default function StatsView() {
 
               Object.entries(data.records).forEach(([dateIso, rec]) => {
                 Object.entries(rec).forEach(([key, val]) => {
-                  if (key === sub.id || (key.startsWith("extra_") && extraIds.has(key.replace("extra_", "")))) {
+                  if (key === sub.id || key.startsWith(sub.id + "_s") || (key.startsWith("extra_") && extraIds.has(key.replace("extra_", "")))) {
                     if (val === "present") {
                       present++;
                       activeTotal++;

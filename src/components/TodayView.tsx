@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useData } from "../context/DataContext";
 import { Subject, ExtraClass, AttendanceStatus } from "../types";
-import { getLocalDateString, DAY_NAMES, calculateSubjectStats } from "../lib/helpers";
+import { getLocalDateString, DAY_NAMES, calculateSubjectStats, getDaySessions } from "../lib/helpers";
 import { Coffee, ChevronRight, Calendar, Plus, Trash2 } from "lucide-react";
 
 export default function TodayView() {
@@ -140,9 +140,9 @@ export default function TodayView() {
         ) : (
           <>
             {/* 1. Regular Lectures */}
-            {todayRegularSubjects.map((sub) => {
-              const currentStatus = todayRecords[sub.id];
-              const timeDetails = sub.dayTimes[String(todayDayIndex)] || "Timings pending";
+            {todayRegularSubjects.flatMap((sub) => getDaySessions(sub, todayDayIndex)).map((sess) => {
+              const sub = sess.subject;
+              const currentStatus = todayRecords[sess.key];
               const stats = calculateSubjectStats(sub, data.records, data.extraClasses);
 
               // Color code the left stripe relative to mark status
@@ -153,8 +153,8 @@ export default function TodayView() {
 
               return (
                 <div
-                  key={sub.id}
-                  id={`today-card-${sub.id}`}
+                  key={sess.key}
+                  id={`today-card-${sess.key}`}
                   className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[20px] p-4.5 shadow-sm relative overflow-hidden flex flex-col justify-between gap-4"
                 >
                   {/* Color stripe */}
@@ -167,21 +167,21 @@ export default function TodayView() {
                         {sub.name}
                       </h3>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
-                        {timeDetails}
+                        {sess.timeString} · <span className="font-semibold text-slate-400">{sess.room}</span>{sess.faculty ? ` · ${sess.faculty}` : ""}
                       </p>
                     </div>
                     <span className="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 text-[9px] px-2 py-0.5 rounded-md font-black uppercase shrink-0 tracking-wider">
-                      {sub.code}
+                      {sub.code}{sess.sessionIndex > 0 ? ` L${sess.sessionIndex + 1}` : ""}
                     </span>
                   </div>
 
 
 
                   {/* Marking Pills style synced with week deck view */}
-                  <div className="flex gap-1.5" id={`marking-btns-${sub.id}`}>
+                  <div className="flex gap-1.5" id={`marking-btns-${sess.key}`}>
                     <button
                       type="button"
-                      onClick={() => handleMark(sub.id, "present")}
+                      onClick={() => handleMark(sess.key, "present")}
                       className={`flex-1 py-1.5 rounded-full text-[14px] font-bold transition-all cursor-pointer ${
                         currentStatus === "present"
                           ? "bg-green-500 text-white shadow-md shadow-green-150"
@@ -192,7 +192,7 @@ export default function TodayView() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleMark(sub.id, "absent")}
+                      onClick={() => handleMark(sess.key, "absent")}
                       className={`flex-1 py-1.5 rounded-full text-[14px] font-bold transition-all cursor-pointer ${
                         currentStatus === "absent"
                           ? "bg-red-500 text-white shadow-md shadow-red-150"
@@ -203,7 +203,7 @@ export default function TodayView() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleMark(sub.id, "cancelled")}
+                      onClick={() => handleMark(sess.key, "cancelled")}
                       className={`flex-1 py-1.5 rounded-full text-[14px] font-bold transition-all cursor-pointer ${
                         currentStatus === "cancelled"
                           ? "bg-slate-400 text-white shadow-sm"

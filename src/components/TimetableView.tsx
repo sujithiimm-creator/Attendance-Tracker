@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useData } from "../context/DataContext";
 import { Subject } from "../types";
-import { getLocalDateString, DAY_SHORT_NAMES, DAY_NAMES } from "../lib/helpers";
+import { getLocalDateString, DAY_SHORT_NAMES, DAY_NAMES, getDaySessions } from "../lib/helpers";
 import { COURSES, SECTIONS, Course, Session } from "../lib/coursesData";
 // Persistent Color Coding for modules
 export function getSubjectColor(index: number) {
@@ -107,7 +107,28 @@ function mapCourseToSubject(course: Course): Subject {
       if (!days.includes(dayIndex)) {
         days.push(dayIndex);
       }
-      dayTimes[String(dayIndex)] = `${s.start}–${s.end} · Rm ${s.room} · ${s.faculty || course.faculty?.join(', ') || 'Staff'}`;
+      
+      const newTime = `${s.start}–${s.end}`;
+      const newRoom = `Rm ${s.room}`;
+      const newFaculty = s.faculty || course.faculty?.join(', ') || 'Staff';
+      const keyStr = String(dayIndex);
+
+      if (dayTimes[keyStr]) {
+        // Appending additional session on same day
+        const existing = dayTimes[keyStr];
+        const parts = existing.split(" · ");
+        const existingTimes = parts[0] || "";
+        const existingRoom = parts[1] || "";
+        const existingFaculty = parts[2] || "";
+
+        if (existingRoom === newRoom && existingFaculty === newFaculty) {
+          dayTimes[keyStr] = `${existingTimes} & ${newTime} · ${existingRoom} · ${existingFaculty}`;
+        } else {
+          dayTimes[keyStr] = `${existing} & ${newTime} · ${newRoom} · ${newFaculty}`;
+        }
+      } else {
+        dayTimes[keyStr] = `${newTime} · ${newRoom} · ${newFaculty}`;
+      }
     }
   });
 
@@ -653,9 +674,9 @@ export default function TimetableView() {
             <div className="min-w-[480px] grid grid-cols-7 gap-2 pb-1" id="timetable-grid-cols">
               {WEEKDAY_ORDER.map((dayIndex) => {
                 const dayName = DAY_SHORT_NAMES[dayIndex];
-                const registeredClasses = data.subjects.filter((sub) =>
-                  sub.days.includes(dayIndex)
-                );
+                const daySessions = data.subjects
+                  .filter((sub) => sub.days.includes(dayIndex))
+                  .flatMap((sub) => getDaySessions(sub, dayIndex));
 
                 return (
                   <div
@@ -667,18 +688,19 @@ export default function TimetableView() {
                     </span>
                     
                     <div className="flex flex-col gap-1.5 flex-1">
-                      {registeredClasses.length === 0 ? (
+                      {daySessions.length === 0 ? (
                         <span className="text-[9px] text-slate-350 italic text-center my-auto leading-tight">
                           No lectures
                         </span>
                       ) : (
-                        registeredClasses.map((sub) => {
+                        daySessions.map((sess) => {
+                          const sub = sess.subject;
                           const subIndex = data.subjects.findIndex((s) => s.id === sub.id);
                           const theme = getSubjectColor(subIndex);
                           return (
                             <div
-                              key={sub.id}
-                              title={`${sub.name} - ${sub.dayTimes[String(dayIndex)]}`}
+                              key={sess.key}
+                              title={`${sub.name} - ${sess.timeString} · ${sess.room} · ${sess.faculty}`}
                               className={`px-1.5 py-1 rounded-lg text-[9px] font-bold text-center border truncate cursor-help ${theme.bg} ${theme.text} ${theme.border}`}
                             >
                               {sub.code}
@@ -729,13 +751,24 @@ export default function TimetableView() {
                       </div>
 
                       {/* Show time details per day */}
-                      <div className="flex flex-col gap-1 mt-1 pr-1">
-                        {sub.days.map((dVal) => (
-                          <div key={dVal} className="flex items-center gap-1.5 text-[10px] text-slate-500">
-                            <span className="font-bold text-slate-400 shrink-0 w-8">{DAY_SHORT_NAMES[dVal]}:</span>
-                            <span className="truncate">{sub.dayTimes[String(dVal)] || "Timings pending"}</span>
-                          </div>
-                        ))}
+                      <div className="flex flex-col gap-1.5 mt-1 pr-1">
+                        {sub.days.map((dVal) => {
+                          const sessions = getDaySessions(sub, dVal);
+                          return (
+                            <div key={dVal} className="flex flex-col gap-1">
+                              {sessions.map((sess, sIdx) => (
+                                <div key={sIdx} className="flex items-center gap-1.5 text-[10px] text-slate-500">
+                                  <span className="font-bold text-slate-400 shrink-0 w-8">
+                                    {sIdx === 0 ? DAY_SHORT_NAMES[dVal] : ""}
+                                  </span>
+                                  <span className="truncate">
+                                    {sess.timeString} · <span className="font-semibold text-slate-400">{sess.room}</span>{sess.faculty ? ` · ${sess.faculty}` : ""}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>

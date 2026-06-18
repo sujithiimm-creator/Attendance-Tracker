@@ -6,7 +6,8 @@ import {
   getMondayOfWeek, 
   getWeekDays, 
   DAY_NAMES, 
-  DAY_SHORT_NAMES 
+  DAY_SHORT_NAMES,
+  getDaySessions
 } from "../lib/helpers";
 import { ChevronLeft, ChevronRight, Calendar, Lock, CheckCircle, Info, Plus, Clock } from "lucide-react";
 
@@ -241,9 +242,9 @@ export default function WeekView() {
                 ) : (
                   <>
                     {/* Standard Course Modules */}
-                    {daySubjects.map((sub) => {
-                      const status = dayRecords[sub.id];
-                      const timeString = sub.dayTimes[String(dayIndex)] || "Timings pending";
+                    {daySubjects.flatMap((sub) => getDaySessions(sub, dayIndex)).map((sess) => {
+                      const sub = sess.subject;
+                      const status = dayRecords[sess.key];
 
                       // Left status indicators for clean look
                       let markerColor = "bg-slate-200";
@@ -252,7 +253,7 @@ export default function WeekView() {
                       else if (status === "cancelled") markerColor = "bg-slate-400";
 
                       return (
-                        <div key={sub.id} className="border-b border-slate-100 last:border-0 pb-4 last:pb-0 flex flex-col gap-3 relative">
+                        <div key={sess.key} className="border-b border-slate-100 last:border-0 pb-4 last:pb-0 flex flex-col gap-3 relative">
                           {/* Inner clean layout */}
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
@@ -263,7 +264,7 @@ export default function WeekView() {
                                 </h4>
                               </div>
                               <span className="text-[11px] text-slate-500 mt-1 block pl-3.5">
-                                {timeString} · <span className="font-extrabold text-indigo-500">{sub.code}</span>
+                                {sess.timeString} · <span className="font-semibold text-slate-400">{sess.room}</span>{sess.faculty ? ` · ${sess.faculty}` : ""} · <span className="font-extrabold text-indigo-500">{sub.code}{sess.sessionIndex > 0 ? ` L${sess.sessionIndex + 1}` : ""}</span>
                               </span>
                             </div>
 
@@ -288,10 +289,10 @@ export default function WeekView() {
                               <span>Not yet occurred</span>
                             </div>
                           ) : (
-                            <div className="flex gap-1.5 pl-3.5" id={`weekview-controls-${dayISO}-${sub.id}`}>
+                            <div className="flex gap-1.5 pl-3.5" id={`weekview-controls-${dayISO}-${sess.key}`}>
                               <button
                                 type="button"
-                                onClick={() => handleMark(dayISO, sub.id, "present")}
+                                onClick={() => handleMark(dayISO, sess.key, "present")}
                                 className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all ${
                                   status === "present"
                                     ? "bg-green-500 text-white shadow-md shadow-green-150"
@@ -302,7 +303,7 @@ export default function WeekView() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => handleMark(dayISO, sub.id, "absent")}
+                                onClick={() => handleMark(dayISO, sess.key, "absent")}
                                 className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all ${
                                   status === "absent"
                                     ? "bg-red-500 text-white shadow-md shadow-red-150"
@@ -313,7 +314,7 @@ export default function WeekView() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => handleMark(dayISO, sub.id, "cancelled")}
+                                onClick={() => handleMark(dayISO, sess.key, "cancelled")}
                                 className={`flex-1 py-1.5 rounded-full text-[10px] font-bold transition-all ${
                                   status === "cancelled"
                                     ? "bg-slate-400 text-white shadow-sm"

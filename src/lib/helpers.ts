@@ -62,6 +62,53 @@ export interface SubjectStats {
   percentage: number; // 0 to 100
 }
 
+export interface ParsedSession {
+  subject: Subject;
+  sessionIndex: number;
+  timeString: string;
+  room: string;
+  faculty: string;
+  fullTimeString: string;
+  key: string;
+}
+
+export function getDaySessions(sub: Subject, dayIndex: number): ParsedSession[] {
+  const dayTimeStr = sub.dayTimes[String(dayIndex)];
+  if (!dayTimeStr) return [];
+
+  const parts = dayTimeStr.split(" · ");
+  const timesPart = parts[0] || "";
+  const roomPart = parts[1] || "";
+  const facultyPart = parts[2] || "";
+
+  if (timesPart.includes(" & ")) {
+    const individualTimes = timesPart.split(" & ");
+    return individualTimes.map((time, i) => {
+      const fullTimeStr = `${time}${roomPart ? " · " + roomPart : ""}${facultyPart ? " · " + facultyPart : ""}`;
+      return {
+        subject: sub,
+        sessionIndex: i,
+        timeString: time,
+        room: roomPart,
+        faculty: facultyPart,
+        fullTimeString: fullTimeStr,
+        key: i === 0 ? sub.id : `${sub.id}_s${i}`,
+      };
+    });
+  }
+
+  // Single session
+  return [{
+    subject: sub,
+    sessionIndex: 0,
+    timeString: timesPart,
+    room: roomPart,
+    faculty: facultyPart,
+    fullTimeString: dayTimeStr,
+    key: sub.id,
+  }];
+}
+
 export function calculateSubjectStats(
   subject: Subject,
   records: UserDocument["records"],
@@ -78,8 +125,8 @@ export function calculateSubjectStats(
   // Loop through all dates in records
   Object.entries(records).forEach(([dateIso, record]) => {
     Object.entries(record).forEach(([key, status]) => {
-      // Key is either subjectId (regular class) or extra_${extraId}
-      if (key === subject.id) {
+      // Key is either subjectId (regular class), a slot-specific session key, or extra_${extraId}
+      if (key === subject.id || key.startsWith(subject.id + "_s")) {
         if (status === "present") presentCount++;
         else if (status === "absent") absentCount++;
         else if (status === "cancelled") cancelledCount++;
