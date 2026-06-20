@@ -7,7 +7,9 @@ import {
   getWeekDays, 
   DAY_NAMES, 
   DAY_SHORT_NAMES,
-  getDaySessions
+  getDaySessions,
+  sortSessions,
+  sortExtraClasses
 } from "../lib/helpers";
 import { ChevronLeft, ChevronRight, Calendar, Lock, CheckCircle, Info, Plus, Clock } from "lucide-react";
 
@@ -121,8 +123,8 @@ export default function WeekView() {
           // Filter standard subjects for this day
           const daySubjects = data.subjects.filter((sub) => sub.days.includes(dayIndex));
           
-          // Filter extra classes scheduled on this date
-          const dayExtras = data.extraClasses.filter((ex) => ex.date === dayISO);
+          // Filter and sort extra classes scheduled on this date
+          const dayExtras = sortExtraClasses(data.extraClasses.filter((ex) => ex.date === dayISO));
 
           const dayRecords = data.records[dayISO] || {};
 
@@ -242,7 +244,7 @@ export default function WeekView() {
                 ) : (
                   <>
                     {/* Standard Course Modules */}
-                    {daySubjects.flatMap((sub) => getDaySessions(sub, dayIndex)).map((sess) => {
+                    {sortSessions(daySubjects.flatMap((sub) => getDaySessions(sub, dayIndex))).map((sess) => {
                       const sub = sess.subject;
                       const status = dayRecords[sess.key];
 

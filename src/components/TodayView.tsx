@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useData } from "../context/DataContext";
 import { Subject, ExtraClass, AttendanceStatus } from "../types";
-import { getLocalDateString, DAY_NAMES, calculateSubjectStats, getDaySessions } from "../lib/helpers";
+import { getLocalDateString, DAY_NAMES, calculateSubjectStats, getDaySessions, sortSessions, sortExtraClasses } from "../lib/helpers";
 import { Coffee, ChevronRight, Calendar, Plus, Trash2 } from "lucide-react";
 
 export default function TodayView() {
@@ -41,8 +41,8 @@ export default function TodayView() {
   );
 
   // Filter extra classes scheduled for today
-  const todayExtraClasses = data.extraClasses.filter(
-    (ex) => ex.date === todayISO
+  const todayExtraClasses = sortExtraClasses(
+    data.extraClasses.filter((ex) => ex.date === todayISO)
   );
 
   // Grab the attendance records for today
@@ -140,7 +140,7 @@ export default function TodayView() {
         ) : (
           <>
             {/* 1. Regular Lectures */}
-            {todayRegularSubjects.flatMap((sub) => getDaySessions(sub, todayDayIndex)).map((sess) => {
+            {sortSessions(todayRegularSubjects.flatMap((sub) => getDaySessions(sub, todayDayIndex))).map((sess) => {
               const sub = sess.subject;
               const currentStatus = todayRecords[sess.key];
               const stats = calculateSubjectStats(sub, data.records, data.extraClasses);

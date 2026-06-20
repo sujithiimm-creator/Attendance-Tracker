@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useData } from "../context/DataContext";
 import { Subject } from "../types";
-import { getLocalDateString, DAY_SHORT_NAMES, DAY_NAMES, getDaySessions } from "../lib/helpers";
+import { getLocalDateString, DAY_SHORT_NAMES, DAY_NAMES, getDaySessions, sortSessions } from "../lib/helpers";
 import { COURSES, SECTIONS, Course, Session } from "../lib/coursesData";
 // Persistent Color Coding for modules
 export function getSubjectColor(index: number) {
@@ -674,9 +674,9 @@ export default function TimetableView() {
             <div className="min-w-[480px] grid grid-cols-7 gap-2 pb-1" id="timetable-grid-cols">
               {WEEKDAY_ORDER.map((dayIndex) => {
                 const dayName = DAY_SHORT_NAMES[dayIndex];
-                const daySessions = data.subjects
+                const daySessions = sortSessions(data.subjects
                   .filter((sub) => sub.days.includes(dayIndex))
-                  .flatMap((sub) => getDaySessions(sub, dayIndex));
+                  .flatMap((sub) => getDaySessions(sub, dayIndex)));
 
                 return (
                   <div

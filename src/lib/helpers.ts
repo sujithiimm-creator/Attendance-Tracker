@@ -109,6 +109,64 @@ export function getDaySessions(sub: Subject, dayIndex: number): ParsedSession[] 
   }];
 }
 
+export function parseTimeToMinutes(timeRangeStr: string): number {
+  const clean = timeRangeStr.toUpperCase().trim();
+  const parts = clean.split(/[–\-]|TO/);
+  const startStr = (parts[0] || "").trim();
+
+  let hour = 0;
+  let minute = 0;
+  const colonMatch = startStr.match(/(\d+):(\d+)/);
+  if (colonMatch) {
+    hour = parseInt(colonMatch[1], 10);
+    minute = parseInt(colonMatch[2], 10);
+  } else {
+    const dMatch = startStr.match(/(\d+)/);
+    if (dMatch) {
+      hour = parseInt(dMatch[1], 10);
+    } else {
+      return 0;
+    }
+  }
+
+  const hasAM = clean.includes("AM") || startStr.includes("AM");
+  const hasPM = clean.includes("PM") || startStr.includes("PM");
+
+  if (hasPM && !hasAM) {
+    if (hour < 12) hour += 12;
+  } else if (hasAM && !hasPM) {
+    if (hour === 12) hour = 0;
+  } else if (hasAM && hasPM) {
+    if (startStr.includes("PM")) {
+      if (hour < 12) hour += 12;
+    } else if (startStr.includes("AM")) {
+      if (hour === 12) hour = 0;
+    } else {
+      if (hour >= 1 && hour < 8) {
+        hour += 12;
+      }
+    }
+  } else {
+    if (hour >= 1 && hour < 8) {
+      hour += 12;
+    }
+  }
+
+  return hour * 60 + minute;
+}
+
+export function sortSessions(sessions: ParsedSession[]): ParsedSession[] {
+  return [...sessions].sort((a, b) => {
+    return parseTimeToMinutes(a.timeString) - parseTimeToMinutes(b.timeString);
+  });
+}
+
+export function sortExtraClasses(extras: ExtraClass[]): ExtraClass[] {
+  return [...extras].sort((a, b) => {
+    return parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time);
+  });
+}
+
 export function calculateSubjectStats(
   subject: Subject,
   records: UserDocument["records"],
